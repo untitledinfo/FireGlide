@@ -53,7 +53,7 @@ const DISCORD_INVITE_CODE = "zpWKETzFnc";
 const YOUTUBE = {
   endpoint: "/api/youtube",   // optional backend; also keyless (see api/youtube.js)
   maxPerChannel: 24,          // pull every recent upload + short, not just a handful
-  refreshMs: 300000,          // re-check every 5 min while the tab is open — live status stays fresh
+  refreshMs: 120000,          // re-check every 2 min while the tab is open — new uploads/shorts and live status stay current
   cacheMs: 21600000,          // keep the last good list for 6 h between visits
   channels: [
     // Real channel ids, resolved once from the @handles and pinned here so the
@@ -716,8 +716,14 @@ function renderCreators() {
    ---------------------------------------------------------
    Four ways to get real data, tried in order:
      1. /api/youtube        — your own endpoint, API key stays on the server
-     2. Piped API           — keyless CORS mirrors, real durations + live flags
-     3. the public RSS feed — read through a CORS relay
+     2. the public RSS feed — every channel's own XML feed, read through a
+                             CORS relay. No key, no quota, never rate-limited
+                             by a third party, so this is the dependable
+                             backbone that auto-updates the grid every
+                             refresh — tried first, ahead of Piped.
+     3. Piped API           — keyless CORS mirrors, adds real durations and
+                             live flags on top of the feed in the background
+                             (see enrichFromPiped) without blocking the grid.
      4. cache / VIDEOS      — the real snapshot in section 1, so the page is
                              never empty and never fake
    ========================================================= */
@@ -836,12 +842,14 @@ async function fromEndpoint() {
 }
 
 /* ---------------------------------------------------------
-   ROUTE 2 — Piped API (keyless, CORS-enabled)
+   ROUTE 3 — Piped API (keyless, CORS-enabled)
    ---------------------------------------------------------
    Public Piped instances proxy YouTube and send permissive CORS headers, so
    the browser reads them directly. Unlike the RSS feed they return real
    durations and livestream flags, which is what makes the Live band and the
-   duration badges accurate. */
+   duration badges accurate. Public instances are also the least reliable
+   piece here (rate limits, downtime), so this is no longer the first thing
+   tried — see fromFeeds() and enrichFromPiped() below. */
 async function fromPiped() {
   let lastErr;
   for (const base of PIPED) {
@@ -883,9 +891,13 @@ async function fromPiped() {
    ---------------------------------------------------------
    Every YouTube channel publishes an open feed at
    youtube.com/feeds/videos.xml?channel_id=UC... — no key, no quota,
-   no sign-up. The only catch is that YouTube doesn't send CORS headers,
-   so a browser can't read it directly. These relays forward the request.
-   They are public services: if one is rate-limited the next is tried.
+   no sign-up, and it is YouTube's own data, not a third-party mirror. The
+   only catch is that YouTube doesn't send CORS headers, so a browser can't
+   read it directly. These relays forward the request. They are public
+   services: if one is rate-limited the next is tried. Five independent
+   relays plus five per-channel timeouts means this route is the most
+   dependable "autoupdate" source the page has — tried right after the
+   optional endpoint, ahead of Piped.
    --------------------------------------------------------- */
 const RELAYS = [
   (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
@@ -974,6 +986,41 @@ async function fromFeeds() {
 }
 
 /* ---------------------------------------------------------
+   ENRICHMENT — fill in the gaps the XML feed can't carry
+   ---------------------------------------------------------
+   The feed has no <duration> and no live flag, so a feed-sourced short with
+   no "#shorts" in its title/description would otherwise render as a full
+   video. Once the grid is already painted from fromFeeds(), this quietly
+   asks Piped for the same two channels' real durations and live flags and
+   patches STATE.videos in place by videoId — so every short reclassifies
+   correctly and the Live band stays accurate, without ever blocking or
+   flashing the initial paint. Best-effort only: any failure here is silent,
+   the feed-only data already on screen is left exactly as it was. */
+async function enrichFromPiped() {
+  try {
+    const { items } = await fromPiped();
+    if (!items.length) return;
+    const byId = new Map(items.map((v) => [v.videoId, v]));
+    let changed = false;
+    STATE.videos.forEach((v) => {
+      const real = v.videoId && byId.get(v.videoId);
+      if (!real) return;
+      if (v.seconds !== real.seconds || v.isShort !== real.isShort || v.isLive !== real.isLive
+          || v.views !== real.views) {
+        v.seconds = real.seconds; v.duration = real.duration; v.isShort = real.isShort;
+        v.isLive = real.isLive; v.views = real.views ?? v.views;
+        v.tags = v.tags.filter((t) => t !== "shorts" && t !== "long" && t !== "live")
+          .concat(v.isShort ? "shorts" : "long", v.isLive ? "live" : []);
+        changed = true;
+      }
+    });
+    if (!changed) return;
+    STATE.live = STATE.videos.filter((v) => v.isLive);
+    renderStatus(); renderFeatured(); renderVideos(); renderLive(); rebuildSearchIndex();
+  } catch { /* Piped unreachable — the feed data already on screen stands as-is */ }
+}
+
+/* ---------------------------------------------------------
    ROUTE 3 — whatever was loaded last, kept for a day
    --------------------------------------------------------- */
 function readCache() {
@@ -1050,16 +1097,17 @@ async function loadYouTube({ silent = false, force = false } = {}) {
   }
   if (STATE.loading && !silent) { renderVideos(); renderLive(); }
 
-  // 2. then go and get the current list
+  // 2. then go and get the current list — XML feed first (most reliable,
+  //    never rate-limited by a third party), Piped as fallback
   let result;
   try {
     result = await fromEndpoint();
   } catch (e1) {
     try {
-      result = await fromPiped();
+      result = await fromFeeds();
     } catch (e2) {
       try {
-        result = await fromFeeds();
+        result = await fromPiped();
       } catch (e3) {
         console.log("[FireGlide] live video sources unreachable:",
           e1.message, "|", e2.message, "|", e3.message);
@@ -1070,6 +1118,11 @@ async function loadYouTube({ silent = false, force = false } = {}) {
 
   if (["live", "piped", "feed"].includes(result.source)) writeCache(result.items, result.source);
   await apply(result);
+
+  // 3. the feed alone can't tell a short from a full video with total
+  //    confidence, or say who's live — patch that in quietly once the
+  //    grid is already on screen
+  if (result.source === "feed") enrichFromPiped();
 
   if (STATE.live.length && !loadYouTube._announced) {
     loadYouTube._announced = true;

@@ -37,6 +37,9 @@
 
   --ease:cubic-bezier(.22,.8,.3,1);
   --shadow:0 24px 70px rgba(0,0,0,.6);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.35),0 32px 90px rgba(0,0,0,.55);
+  --glow-line:linear-gradient(90deg,transparent,var(--fire),var(--glide),transparent);
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ---------- 1b. THEMES ----------
@@ -93,6 +96,12 @@ body{
   min-height:100vh;
 }
 body.is-locked{overflow:hidden;}
+/* fine film-grain over the whole page — the single cheapest thing that
+   separates a flat dark UI from one that feels like it has material to it */
+body::after{
+  content:"";position:fixed;inset:0;z-index:5;pointer-events:none;
+  background-image:var(--grain);opacity:.035;mix-blend-mode:overlay;
+}
 img{max-width:100%;display:block;height:auto;}
 a{color:inherit;text-decoration:none;}
 button,input,select,textarea{font:inherit;color:inherit;}
@@ -237,15 +246,15 @@ body.has-cursor [role="button"]{cursor:none;}
 .btn--fire{
   background:linear-gradient(120deg,var(--fire),var(--fire-2));
   background-size:200% 100%;border-color:transparent;color:#140600;
-  box-shadow:0 10px 32px rgba(255,77,28,.3);
+  box-shadow:0 10px 32px rgba(255,77,28,.3),inset 0 1px 0 rgba(255,255,255,.45);
 }
-.btn--fire:hover{background-position:100% 0;box-shadow:0 16px 46px rgba(255,120,40,.46);}
+.btn--fire:hover{background-position:100% 0;box-shadow:0 16px 46px rgba(255,120,40,.46),inset 0 1px 0 rgba(255,255,255,.5);}
 .btn--glide{
   background:linear-gradient(120deg,var(--glide),var(--glide-2));
   background-size:200% 100%;border-color:transparent;color:#00131c;
-  box-shadow:0 10px 32px rgba(0,180,255,.3);
+  box-shadow:0 10px 32px rgba(0,180,255,.3),inset 0 1px 0 rgba(255,255,255,.45);
 }
-.btn--glide:hover{background-position:100% 0;box-shadow:0 16px 46px rgba(0,200,255,.46);}
+.btn--glide:hover{background-position:100% 0;box-shadow:0 16px 46px rgba(0,200,255,.46),inset 0 1px 0 rgba(255,255,255,.5);}
 .btn--ghost{backdrop-filter:blur(10px);}
 .btn--ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.08);}
 
@@ -263,10 +272,15 @@ body.has-cursor [role="button"]{cursor:none;}
   padding:14px 0;
 }
 .nav.is-stuck{
-  background:rgba(6,8,12,.82);
-  backdrop-filter:blur(16px) saturate(140%);
-  border-bottom-color:var(--line);
+  background:rgba(6,8,12,.78);
+  backdrop-filter:blur(20px) saturate(160%);
+  border-bottom-color:transparent;
   padding:8px 0;
+  box-shadow:0 1px 0 var(--line),var(--shadow-lg);
+}
+.nav.is-stuck::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:var(--glow-line);opacity:.5;
 }
 .nav__wrap{
   width:min(var(--shell),94vw);margin:0 auto;
@@ -387,6 +401,14 @@ body.has-cursor [role="button"]{cursor:none;}
 .hero__glow--fire{left:-14vw;top:2vw;background:radial-gradient(circle,var(--fire),transparent 62%);animation:breathe 9s ease-in-out infinite;}
 .hero__glow--glide{right:-14vw;top:14vw;background:radial-gradient(circle,var(--glide),transparent 62%);animation:breathe 11s ease-in-out infinite reverse;}
 @keyframes breathe{50%{transform:scale(1.14);opacity:.58;}}
+/* a quiet vignette pulls focus back to center once the two glows spread out,
+   and a top-down fade keeps the very top of the page from feeling flat */
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%,rgba(0,0,0,.5),transparent 70%),
+    radial-gradient(ellipse 120% 70% at 50% 0%,rgba(0,0,0,.35),transparent 55%);
+}
 
 .hero__collide{position:absolute;inset:0;width:100%;height:100%;z-index:2;}
 .hero__inner{position:relative;z-index:3;width:min(var(--shell),92vw);}
@@ -1397,7 +1419,7 @@ img.image-error{display:none !important;}
   box-shadow:none;
   filter:drop-shadow(0 18px 26px var(--accent-soft));
 }
-.btn--fire,.btn--glide{box-shadow:none;}
+.btn--fire,.btn--glide{box-shadow:inset 0 1px 0 rgba(255,255,255,.45);}
 .btn--fire:hover{filter:drop-shadow(0 10px 20px rgba(255,90,30,.5));}
 .btn--glide:hover{filter:drop-shadow(0 10px 20px rgba(0,190,255,.5));}
 .filter.is-active{box-shadow:none;filter:drop-shadow(0 6px 16px rgba(255,90,30,.35));}
