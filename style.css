@@ -64,6 +64,20 @@
   --glide:#20d6c7;--glide-2:#7a5cff;--glide-soft:rgba(32,214,199,.18);
   --text:#fdf1ee;--muted:#c39aa2;--dim:#8a6870;
 }
+:root[data-theme="toxic"]{
+  --void:#050805;--panel:#0a120c;--panel-2:#0e1912;
+  --line:rgba(180,255,180,.08);--line-strong:rgba(180,255,180,.18);
+  --fire:#7dff3d;--fire-2:#c6ff4d;--fire-soft:rgba(125,255,61,.2);
+  --glide:#b455ff;--glide-2:#5c6bff;--glide-soft:rgba(180,85,255,.2);
+  --text:#eefff0;--muted:#96b39c;--dim:#5e7a63;
+}
+:root[data-theme="cyber"]{
+  --void:#07040c;--panel:#120a1e;--panel-2:#180f27;
+  --line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.2);
+  --fire:#ff2ea6;--fire-2:#ffce2e;--fire-soft:rgba(255,46,166,.22);
+  --glide:#2ee8ff;--glide-2:#7a5cff;--glide-soft:rgba(46,232,255,.2);
+  --text:#f6f0ff;--muted:#a99fc2;--dim:#6d6591;
+}
 
 /* ---------- 2. RESET ---------- */
 *,*::before,*::after{box-sizing:border-box;}
@@ -258,14 +272,24 @@ body.has-cursor [role="button"]{cursor:none;}
   width:min(var(--shell),94vw);margin:0 auto;
   display:flex;align-items:center;gap:20px;
 }
-.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.brand__img{width:34px;height:34px;border-radius:9px;object-fit:cover;}
+.brand{display:flex;align-items:center;gap:11px;flex-shrink:0;}
+.brand__img{
+  width:46px;height:46px;border-radius:11px;object-fit:cover;
+  box-shadow:0 0 0 1px var(--line-strong),0 0 22px rgba(255,120,40,.35);
+  transition:box-shadow .3s var(--ease),transform .3s var(--ease);
+}
+.brand:hover .brand__img{transform:scale(1.06) rotate(-2deg);box-shadow:0 0 0 1px var(--line-strong),0 0 34px rgba(255,120,40,.55);}
 .brand__img.image-error,.brand__img:not([src]){display:none;}
 .brand__fallback{
-  display:none;width:34px;height:34px;border-radius:9px;
-  place-items:center;font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;
+  display:none;width:46px;height:46px;border-radius:11px;
+  place-items:center;font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;
   background:conic-gradient(from 210deg,var(--fire),var(--fire-2),var(--glide),var(--glide-2),var(--fire));
   box-shadow:0 0 22px rgba(255,90,40,.35);
+  animation:logoSpinGlow 6s linear infinite;
+}
+@keyframes logoSpinGlow{
+  0%,100%{box-shadow:0 0 18px rgba(255,90,40,.35);}
+  50%{box-shadow:0 0 30px rgba(0,212,255,.4);}
 }
 .brand.is-fallback .brand__fallback{display:grid;}
 .brand__text{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.04em;}
@@ -413,6 +437,36 @@ body.has-cursor [role="button"]{cursor:none;}
   border:1px solid var(--line);box-shadow:var(--shadow);
 }
 .hero__art.image-error,.hero__art:not([src]){display:none;}
+
+/* big animated logo mark shown front-and-center in the hero — the real
+   brand mark, not a placeholder, so the very first thing on the page is
+   unmistakably FireGlide. */
+.hero__logo-wrap{
+  position:relative;width:min(190px,42vw);height:min(190px,42vw);
+  margin:0 auto 18px;display:grid;place-items:center;
+}
+.hero__logo-wrap::before{
+  content:"";position:absolute;inset:-22%;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--fire),var(--fire-2),var(--glide),var(--glide-2),var(--fire));
+  filter:blur(26px);opacity:.55;animation:spinX 7s linear infinite;
+}
+.hero__logo-wrap::after{
+  content:"";position:absolute;inset:-6%;border-radius:50%;
+  border:1px dashed var(--line-strong);opacity:.6;
+  animation:spinX 26s linear infinite reverse;
+}
+.hero__logo{
+  position:relative;z-index:2;width:100%;height:100%;object-fit:cover;
+  border-radius:50%;border:2px solid rgba(255,255,255,.5);
+  box-shadow:0 0 60px rgba(255,110,40,.45),0 0 110px rgba(0,190,255,.25);
+  animation:logoFloat 5s ease-in-out infinite;
+}
+.hero__logo.image-error,.hero__logo:not([src]){display:none;}
+.hero__logo-wrap:has(.hero__logo.image-error),
+.hero__logo-wrap:has(.hero__logo:not([src])){display:none;}
+@keyframes logoFloat{50%{transform:translateY(-10px);}}
+.is-loading .hero__logo-wrap{opacity:0;}
+.hero__logo-wrap{opacity:1;transition:opacity .6s var(--ease) .2s;}
 
 .hero__scroll{
   position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:4;
@@ -576,7 +630,8 @@ body.has-cursor [role="button"]{cursor:none;}
 .discord-cta > *{position:relative;z-index:1;}
 .discord-cta__img{width:96px;margin:0 auto 12px;border-radius:22px;}
 .discord-cta__img.image-error,.discord-cta__img:not([src]){display:none;}
-.discord-cta__icon{font-size:52px;color:#98a4ff;filter:drop-shadow(0 0 26px rgba(88,101,242,.8));}
+.discord-cta__icon{font-size:52px;color:#98a4ff;filter:drop-shadow(0 0 26px rgba(88,101,242,.8));animation:discordPulse 2.6s ease-in-out infinite;}
+@keyframes discordPulse{50%{transform:scale(1.08);filter:drop-shadow(0 0 40px rgba(88,101,242,1));}}
 .discord-cta h3{font-size:clamp(26px,4.4vw,46px);margin:16px 0 10px;}
 .discord-cta p{color:var(--muted);max-width:52ch;margin:0 auto;}
 .discord-cta__meta{
@@ -800,8 +855,14 @@ body.has-cursor [role="button"]{cursor:none;}
   pointer-events:none;
 }
 .game-card__icon{font-size:38px;color:var(--accent);filter:drop-shadow(0 0 20px var(--accent-soft));}
-.game-card__img{width:56px;height:56px;margin:0 auto;border-radius:14px;object-fit:cover;}
-.game-card__img.image-error{display:none;}
+.game-card__badge{position:relative;width:64px;height:70px;margin:0 auto 4px;display:grid;place-items:center;}
+.game-card__img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 6px 18px var(--accent-soft));
+  transition:transform .35s var(--ease);
+}
+.game-card:hover .game-card__img{transform:translateY(-4px) scale(1.06);}
+.game-card__img.image-error,.game-card__img:not([src]){display:none;}
 .game-card h3{font-size:20px;margin:14px 0 4px;}
 .game-card p{font-size:13px;color:var(--dim);margin-bottom:16px;}
 .game-card__bar{height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:16px;}
@@ -1030,6 +1091,32 @@ img.image-error{display:none !important;}
   .toasts{right:12px;left:12px;width:auto;bottom:80px;}
   .to-top{right:14px;bottom:14px;}
   .section__sub{font-size:15px;}
+  .brand__img,.brand__fallback{width:38px;height:38px;}
+  .brand__text{font-size:16px;}
+  .nav__wrap{gap:10px;}
+  .nav__right{gap:8px;}
+  .theme-open,.search-btn{width:36px;height:36px;padding:0;justify-content:center;}
+  .search-btn{gap:0;}
+}
+
+/* iOS Safari zooms the page on focus when a field's effective font-size is
+   under 16px — the body's clamp() drops below that on phone-width
+   viewports, so every form control needs an explicit floor. */
+.field input,.field select,.field textarea,.search__bar input{font-size:16px;}
+
+/* mobile drawer: the header hides the Join Discord button at 880px, so the
+   only way in was the search overlay — give the open drawer its own CTA. */
+.nav__links__cta{display:none;}
+@media (max-width:880px){
+  .nav__links__cta{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    margin-top:14px;padding:14px;border-radius:12px;
+    font-family:var(--font-display);font-size:15px;letter-spacing:.04em;
+    color:#140600;background:linear-gradient(120deg,var(--fire),var(--fire-2));
+    box-shadow:0 10px 30px rgba(255,90,30,.32);
+    opacity:0;transform:translateY(-10px);
+  }
+  .nav__links.is-open .nav__links__cta{animation:menuItem .4s var(--ease) .34s forwards;}
 }
 
 /* ---------- 27. REDUCED MOTION ---------- */
@@ -1353,7 +1440,11 @@ img.image-error{display:none !important;}
 @keyframes markSpin{to{transform:rotate(360deg);}}
 
 .creator-card__ph{animation:float 6s ease-in-out infinite;}
-.game-card__icon{font-size:0;display:grid;place-items:center;}
+/* the hex mark is the fallback layer, sitting under the real badge image —
+   hidden while the image is showing, revealed automatically if it errors */
+.game-card__icon{display:none;place-items:center;}
+.game-card__badge:has(.game-card__img.image-error) .game-card__icon,
+.game-card__badge:has(.game-card__img:not([src])) .game-card__icon{display:grid;}
 .event-card__icon{display:block;}
 .fusion__icon{
   position:relative;display:grid;place-items:center;

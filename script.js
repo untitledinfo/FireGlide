@@ -7,40 +7,35 @@
 /* =========================================================
    1. CONFIGURATION
    ---------------------------------------------------------
-   IMAGES — hosted on GitHub Raw, pointed at untitledinfo/FireGlide@main
-   below. Change GH_USER / GH_REPO / GH_BRANCH if that ever moves. Nothing is bundled:
-   the browser loads these straight from raw.githubusercontent.com.
-   If a URL 404s the image hides itself and a CSS placeholder shows.
-   ========================================================= */
-const GH_USER   = "untitledinfo";
-const GH_REPO   = "FireGlide";
-const GH_BRANCH = "main";
-const raw = (file) =>
-  `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/${GH_BRANCH}/assets/${file}`;
-
+   IMAGES — served locally from ./assets so the page never depends on a
+   remote branch/host being reachable. logo/favicon/firepdx/glidux are the
+   real uploaded photos; the six game badges are original hex-mark SVG
+   icons (not the games' own trademarked logos) drawn to match each game's
+   accent color, so they stay crisp at any size on any device. */
 const FIREGLIDE_IMAGES = {
-  logo:     raw("logo.png"),
-  favicon:  raw("favicon.png"),
-  hero:     raw("hero.png"),
-  firepdx:  raw("firepdx.png"),
-  glidux:   raw("glidux.png"),
-  discord:  raw("discord.png"),
-  minecraft: raw("minecraft.png"),
-  roblox:    raw("roblox.png"),
-  fortnite:  raw("fortnite.png"),
-  valorant:  raw("valorant.png"),
-  gta:       raw("gta.png"),
-  cod:       raw("cod.png"),
-  tournament: raw("events/tournament.png"),
-  giveaway:   raw("events/giveaway.png"),
-  community:  raw("events/community.png")
+  logo:      "assets/logo.png",
+  favicon:   "assets/favicon.png",
+  firepdx:   "assets/firepdx.png",
+  glidux:    "assets/glidux.png",
+  minecraft: "assets/minecraft.svg",
+  roblox:    "assets/roblox.svg",
+  fortnite:  "assets/fortnite.svg",
+  valorant:  "assets/valorant.svg",
+  gta:       "assets/gta.svg",
+  cod:       "assets/cod.svg"
 };
 
 const LINKS = {
   firepdx: "https://www.youtube.com/@Firepdx",
   glidux:  "https://www.youtube.com/@Glidux",
-  discord: "https://discord.gg/zVZvjDcu"
+  discord: "https://discord.gg/zpWKETzFnc"
 };
+
+/* Invite code only (no bot, no secrets) — Discord's public invite-resolve
+   endpoint answers this with real, live member/online counts and CORS
+   enabled, so a static GitHub Pages site can call it straight from the
+   browser. See updateDiscordStats() in section 18. */
+const DISCORD_INVITE_CODE = "zpWKETzFnc";
 
 /* ---------------------------------------------------------
    YOUTUBE — live uploads, shorts and streams
@@ -83,9 +78,8 @@ const PIPED = [
   "https://pipedapi.reallyaweso.me"
 ];
 
-/* Backend endpoint for live Discord numbers. See README notes at the
-   bottom of this file — a bot token must never live in frontend code. */
-const DISCORD_ENDPOINT = "/api/discord";
+/* Real Discord numbers refresh cadence — see updateDiscordStats() in
+   section 18, which reads DISCORD_INVITE_CODE from the top of this file. */
 const DISCORD_REFRESH_MS = 60000;
 
 const CREATORS = [
@@ -291,11 +285,13 @@ function applyImages() {
   const logo = $("#brandLogo");
   if (logo) logo.src = FIREGLIDE_IMAGES.logo;
 
-  const heroArt = $("#heroArt");
-  if (heroArt) { heroArt.src = FIREGLIDE_IMAGES.hero; heroArt.alt = "FireGlide key art"; }
+  const heroLogo = $("#heroLogo");
+  if (heroLogo) heroLogo.src = FIREGLIDE_IMAGES.logo;
 
-  const disc = $("#discordArt");
-  if (disc) { disc.src = FIREGLIDE_IMAGES.discord; disc.alt = ""; }
+  // #discordArt is left unset here on purpose — updateDiscordStats() fills
+  // it with the server's real icon once the Discord invite endpoint
+  // answers; until then the glowing fa-discord icon already in the markup
+  // covers it, so nothing ever shows as a broken image.
 }
 
 function markBroken(img) {
@@ -557,7 +553,9 @@ const THEMES = [
   { id: "fireglide", label: "FireGlide", fire: "#ff4d1c", glide: "#00d4ff" },
   { id: "noir",      label: "Noir",      fire: "#ff6a3d", glide: "#5fd0ff" },
   { id: "neon",      label: "Neon",      fire: "#ff3d6e", glide: "#00f0ff" },
-  { id: "sunset",    label: "Sunset",    fire: "#ff5277", glide: "#20d6c7" }
+  { id: "sunset",    label: "Sunset",    fire: "#ff5277", glide: "#20d6c7" },
+  { id: "toxic",     label: "Toxic",     fire: "#7dff3d", glide: "#b455ff" },
+  { id: "cyber",     label: "Cyber",     fire: "#ff2ea6", glide: "#2ee8ff" }
 ];
 
 function applyTheme(id, { persist = true } = {}) {
@@ -634,7 +632,7 @@ function navigation() {
     burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     document.body.classList.toggle("is-locked", open);
   });
-  links.addEventListener("click", (e) => { if (e.target.tagName === "A") closeMenu(); });
+  links.addEventListener("click", (e) => { if (e.target.closest("a")) closeMenu(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
 
   /* active section highlighting */
@@ -1523,8 +1521,10 @@ function renderGames() {
   grid.innerHTML = GAMES.map((g) => `
     <article class="game-card" style="--accent:${g.accent};--accent-soft:${g.accent}33">
       <span class="game-card__glow" aria-hidden="true"></span>
-      <img class="game-card__img" src="${g.image}" alt="" loading="lazy" width="56" height="56">
-      <span class="game-card__icon">${mark(g.glyph, 58)}</span>
+      <span class="game-card__badge">
+        <span class="game-card__icon">${mark(g.glyph, 58)}</span>
+        <img class="game-card__img" src="${g.image}" alt="" loading="lazy" width="64" height="70">
+      </span>
       <h3>${esc(g.name)}</h3>
       <p>${esc(g.activity)}</p>
       <div class="game-card__bar" role="img" aria-label="Community activity ${g.level} out of 100">
@@ -1658,36 +1658,57 @@ Portfolio: ${d.get("portfolio") || "—"}`;
 }
 
 /* =========================================================
-   18. DISCORD STATS — API-ready, no secrets in the browser
+   18. DISCORD STATS — real numbers, no bot, no backend
    ---------------------------------------------------------
-   The frontend only ever calls your own endpoint. A Discord bot token
-   must live on the server, never here. See the notes at the end of
-   this file for a minimal backend.
-   ========================================================= */
+   GitHub Pages is static, so there is no server to hold a bot token. This
+   uses Discord's own public invite-resolve endpoint instead — it needs
+   nothing but the invite code, answers with permissive CORS so the browser
+   can call it directly, and returns the guild's real approximate member
+   count and real approximate online-now count straight from Discord. Also
+   fills the community-card art with the server's actual icon, when it has
+   one, instead of a placeholder. */
 async function updateDiscordStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   try {
-    const res = await fetch(DISCORD_ENDPOINT, { headers: { Accept: "application/json" } });
+    const res = await fetchTimeout(
+      `https://discord.com/api/v9/invites/${DISCORD_INVITE_CODE}?with_counts=true&with_expiration=true`,
+      { headers: { Accept: "application/json" } },
+      8000
+    );
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
 
-    set("memberCount", Number(data.members).toLocaleString());
-    set("onlineCount", Number(data.online).toLocaleString());
-    set("ctaMembers", Number(data.members).toLocaleString());
-    set("ctaOnline", Number(data.online).toLocaleString());
-    set("serverStatus", data.status || "Online");
+    const members = Number(data.approximate_member_count);
+    const online   = Number(data.approximate_presence_count);
+    if (!Number.isFinite(members) || !Number.isFinite(online)) throw new Error("Unexpected response shape");
+
+    set("memberCount", members.toLocaleString());
+    set("onlineCount", online.toLocaleString());
+    set("ctaMembers", members.toLocaleString());
+    set("ctaOnline", online.toLocaleString());
+    set("serverStatus", "Online");
     set("memberNote", "Live from Discord");
     set("statusNote", "Updated " + new Date().toLocaleTimeString());
-    $("#serverStatus").style.color = "";
+    const s = $("#serverStatus");
+    if (s) s.style.color = "";
+
+    // real server icon, if the guild has one set
+    const guild = data.guild;
+    const disc = $("#discordArt");
+    if (disc && guild && guild.icon) {
+      const ext = guild.icon.startsWith("a_") ? "gif" : "png";
+      disc.src = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.${ext}?size=256`;
+      disc.alt = (guild.name || "FireGlide") + " server icon";
+    }
   } catch (error) {
-    console.log("Discord API unavailable — showing offline state.", error.message);
+    console.log("Discord invite endpoint unavailable — showing offline state.", error.message);
     set("memberCount", "—");
     set("onlineCount", "—");
     set("ctaMembers", "—");
     set("ctaOnline", "—");
     set("serverStatus", "No live data");
-    set("memberNote", "Connect /api/discord to show live numbers");
-    set("statusNote", "Endpoint not reachable");
+    set("memberNote", "Couldn't reach Discord — will retry");
+    set("statusNote", "Retrying every " + Math.round(DISCORD_REFRESH_MS / 1000) + "s");
     const s = $("#serverStatus");
     if (s) s.style.color = "var(--muted)";
   }
@@ -1761,7 +1782,7 @@ function buildIndex() {
   GAMES.forEach((g) => idx.push({ kind:"Game", title:g.name, sub:g.activity, icon:g.icon, accent:g.accent, href:"#games" }));
   FAQS.forEach((f) => idx.push({ kind:"FAQ", title:f.q, sub:f.a.slice(0, 80) + "…", icon:"fa-circle-question", accent:"#9aa4b4", href:"#faq" }));
   STAFF_ROLES.forEach((r) => idx.push({ kind:"Staff", title:r, sub:"Open application", icon:"fa-shield-halved", accent:"#3ddc84", href:"#staff" }));
-  idx.push({ kind:"Community", title:"Join the Discord", sub:"discord.gg/zVZvjDcu", icon:"fa-discord", accent:"#5865f2", href:LINKS.discord, external:true, brand:true });
+  idx.push({ kind:"Community", title:"Join the Discord", sub:"discord.gg/zpWKETzFnc", icon:"fa-discord", accent:"#5865f2", href:LINKS.discord, external:true, brand:true });
   return idx;
 }
 
@@ -2066,43 +2087,28 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else init();
 
 /* =========================================================
-   24. CONNECTING REAL DISCORD NUMBERS (read me)
+   24. HOW THE LIVE DISCORD NUMBERS WORK (read me)
    ---------------------------------------------------------
-   This site is static HTML/CSS/JS, so it cannot talk to the Discord
-   bot API directly. Doing that would mean shipping a bot token to every
-   visitor, and anyone could read it from view-source and take over the
-   bot. Never put DISCORD_BOT_TOKEN in HTML, CSS or JS.
+   This site is static HTML/CSS/JS with no server, so it can't talk to the
+   real Discord bot API directly — that would mean shipping a bot token to
+   every visitor, readable from view-source. Never put DISCORD_BOT_TOKEN in
+   HTML, CSS or JS.
 
-   The frontend above already calls one endpoint: /api/discord.
-   Host that endpoint anywhere that runs server code — Vercel, Netlify
-   Functions, Cloudflare Workers, Express — and return JSON shaped like:
+   Instead, updateDiscordStats() (section 18) calls Discord's own public
+   invite-resolve endpoint:
 
-       { "members": 12480, "online": 843, "status": "Online" }
+       https://discord.com/api/v9/invites/{DISCORD_INVITE_CODE}?with_counts=true
 
-   Example (Vercel / Netlify, file: api/discord.js):
+   That endpoint needs no key and no auth, answers with CORS headers a
+   browser can read directly, and returns the server's real numbers:
 
-       export default async function handler(req, res) {
-         const r = await fetch(
-           `https://discord.com/api/v10/guilds/${process.env.GUILD_ID}?with_counts=true`,
-           { headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` } }
-         );
-         const g = await r.json();
-         res.setHeader("Cache-Control", "s-maxage=60");
-         res.json({
-           members: g.approximate_member_count,
-           online:  g.approximate_presence_count,
-           status:  "Online"
-         });
-       }
+       approximate_member_count    → total members
+       approximate_presence_count  → members online right now
+       guild.icon                  → the server's real icon, if it has one
 
-   The token stays in the host's environment variables. The browser only
-   ever sees three numbers.
-
-   Simpler option with no backend at all: enable the server widget in
-   Discord (Server Settings → Widget) and point DISCORD_ENDPOINT at
-   https://discord.com/api/guilds/GUILD_ID/widget.json — that returns
-   presence_count publicly, but not total member count.
-
-   Until either is wired up, the panel honestly shows "No live data"
-   instead of a fake hardcoded number.
+   DISCORD_INVITE_CODE lives at the top of this file — swap it if the
+   server's invite ever changes. Nothing to host, nothing to deploy: it
+   works exactly the same on GitHub Pages as anywhere else. If Discord is
+   briefly unreachable the panel honestly shows "No live data" and keeps
+   retrying every DISCORD_REFRESH_MS, rather than a fake hardcoded number.
    ========================================================= */

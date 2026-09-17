@@ -15,8 +15,7 @@
     if (t && t !== "fireglide") document.documentElement.setAttribute("data-theme", t);
   } catch (e) { /* private mode — falls back to the default theme */ }
 </script>
-<!-- Update canonical/og:url to the live deployed domain once one exists; the GitHub repo is a safe placeholder until then. -->
-<link rel="canonical" href="https://github.com/untitledinfo/FireGlide">
+<link rel="canonical" href="https://untitledinfo.github.io/FireGlide/">
 <meta name="author" content="FireGlide">
 <meta name="keywords" content="FireGlide, Firepdx, Glidux, gaming community, Discord, Minecraft, Roblox, esports">
 
@@ -25,18 +24,18 @@
 <meta property="og:site_name" content="FireGlide">
 <meta property="og:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
 <meta property="og:description" content="Two creators. One community. Infinite gaming. Watch content, join events and connect on Discord.">
-<meta property="og:url" content="https://github.com/untitledinfo/FireGlide">
-<meta property="og:image" content="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/hero.png">
+<meta property="og:url" content="https://untitledinfo.github.io/FireGlide/">
+<meta property="og:image" content="https://untitledinfo.github.io/FireGlide/assets/logo.png">
 <meta property="og:image:alt" content="FireGlide — where fire meets glide">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
 <meta name="twitter:description" content="Two creators. One community. Infinite gaming.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/hero.png">
+<meta name="twitter:image" content="https://untitledinfo.github.io/FireGlide/assets/logo.png">
 
-<link rel="icon" href="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/favicon.png">
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,12 +48,13 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "FireGlide",
-  "url": "https://github.com/untitledinfo/FireGlide",
+  "url": "https://untitledinfo.github.io/FireGlide/",
+  "logo": "https://untitledinfo.github.io/FireGlide/assets/logo.png",
   "description": "Gaming community bringing Firepdx and Glidux together.",
   "sameAs": [
     "https://www.youtube.com/@Firepdx",
     "https://www.youtube.com/@Glidux",
-    "https://discord.gg/zVZvjDcu"
+    "https://discord.gg/zpWKETzFnc"
   ]
 }
 </script>
@@ -91,7 +91,7 @@
 <header class="nav" id="nav">
   <div class="nav__wrap">
     <a class="brand" href="#home" aria-label="FireGlide home">
-      <img class="brand__img" id="brandLogo" alt="" width="34" height="34">
+      <img class="brand__img" id="brandLogo" alt="" width="46" height="46">
       <span class="brand__fallback" aria-hidden="true">FG</span>
       <span class="brand__text"><b>FIRE</b><i>GLIDE</i></span>
     </a>
@@ -105,6 +105,9 @@
       <a href="#community">Community</a>
       <a href="#staff">Staff</a>
       <a href="#faq">FAQ</a>
+      <a class="nav__links__cta" href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">
+        Join Discord <i class="fa-brands fa-discord" aria-hidden="true"></i>
+      </a>
     </nav>
 
     <div class="nav__right">
@@ -119,7 +122,7 @@
         <div class="theme-menu" id="themeMenu" role="menu" hidden></div>
       </div>
       <span class="live-pill"><i class="dot" aria-hidden="true"></i> Discord live</span>
-      <a class="btn btn--fire nav__cta" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+      <a class="btn btn--fire nav__cta sheen" data-magnetic href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">
         Join Discord <i class="fa-brands fa-discord" aria-hidden="true"></i>
       </a>
       <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
@@ -140,6 +143,10 @@
   <div class="hero__inner" id="heroParallax">
     <p class="hud hud--top"><i class="dot" aria-hidden="true"></i> FireGlide network · system online</p>
 
+    <div class="hero__logo-wrap">
+      <img class="hero__logo" id="heroLogo" alt="FireGlide logo" fetchpriority="high">
+    </div>
+
     <h1 class="hero__title" id="heroTitle">
       <span class="hero__word hero__word--fire">FIRE</span><span class="hero__word hero__word--glide">GLIDE</span>
     </h1>
@@ -158,12 +165,11 @@
       <a class="btn btn--glide" data-magnetic href="https://www.youtube.com/@Glidux" target="_blank" rel="noopener noreferrer">
         <i class="fa-solid fa-bolt" aria-hidden="true"></i> Watch Glidux
       </a>
-      <a class="btn btn--ghost" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+      <a class="btn btn--ghost" data-magnetic href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">
         <i class="fa-brands fa-discord" aria-hidden="true"></i> Join Discord
       </a>
     </div>
 
-    <img class="hero__art" id="heroArt" alt="" fetchpriority="high">
   </div>
 
   <a class="hero__scroll" href="#fusion" aria-label="Scroll to next section"><span></span></a>
@@ -237,7 +243,7 @@
       <li><b id="ctaOnline">—</b> online</li>
       <li><b class="ok">Online</b> status</li>
     </ul>
-    <a class="btn btn--fire btn--lg" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+    <a class="btn btn--fire btn--lg sheen" data-magnetic href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">
       Join Discord <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
     </a>
   </article>
@@ -407,7 +413,7 @@
         <p>Everything looks complete. Copy your answers and post them in the application channel on Discord.</p>
         <div class="staff__done-actions">
           <button class="btn btn--ghost" type="button" id="copyApp">Copy answers</button>
-          <a class="btn btn--fire" href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">Continue to Discord <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn btn--fire" href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">Continue to Discord <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
       </div>
     </form>
@@ -446,7 +452,7 @@
 
     <nav class="footer__col" aria-label="Community">
       <h3>Community</h3>
-      <a href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer">Discord</a>
       <a href="#staff">Staff</a>
       <a href="#events">Events</a>
       <a href="#faq">FAQ</a>
@@ -461,7 +467,7 @@
     <nav class="footer__col" aria-label="Social">
       <h3>Social</h3>
       <a href="https://www.youtube.com/@Firepdx" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i> YouTube</a>
-      <a href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a>
+      <a href="https://discord.gg/zpWKETzFnc" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a>
     </nav>
   </div>
 
