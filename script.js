@@ -7,13 +7,13 @@
 /* =========================================================
    1. CONFIGURATION
    ---------------------------------------------------------
-   IMAGES — hosted on GitHub Raw. Replace USERNAME / REPOSITORY / main
-   with your real GitHub account, repo and branch. Nothing is bundled:
+   IMAGES — hosted on GitHub Raw, pointed at untitledinfo/FireGlide@main
+   below. Change GH_USER / GH_REPO / GH_BRANCH if that ever moves. Nothing is bundled:
    the browser loads these straight from raw.githubusercontent.com.
    If a URL 404s the image hides itself and a CSS placeholder shows.
    ========================================================= */
-const GH_USER   = "USERNAME";
-const GH_REPO   = "REPOSITORY";
+const GH_USER   = "untitledinfo";
+const GH_REPO   = "FireGlide";
 const GH_BRANCH = "main";
 const raw = (file) =>
   `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/${GH_BRANCH}/assets/${file}`;
@@ -522,7 +522,11 @@ function customCursor() {
   window.addEventListener("mousemove", (e) => {
     mx = e.clientX; my = e.clientY;
     dot.style.transform = `translate(${mx}px, ${my}px)`;
-    if (!shown) { shown = true; ring.style.opacity = dot.style.opacity = "1"; document.body.classList.add("has-cursor"); }
+    // Always restore opacity on move, not just the first time — previously
+    // this was gated behind `shown`, so once the pointer left the window
+    // (mouseleave hides it below) it never came back on re-entry.
+    ring.style.opacity = dot.style.opacity = "1";
+    if (!shown) { shown = true; document.body.classList.add("has-cursor"); }
   }, { passive: true });
 
   (function loop() {
@@ -540,6 +544,56 @@ function customCursor() {
       ring.classList.remove("is-hot");
   });
   document.addEventListener("mouseleave", () => { ring.style.opacity = dot.style.opacity = "0"; });
+}
+
+/* =========================================================
+   7b. THEME SWITCHER
+   ---------------------------------------------------------
+   Four moods on the same fire/glide identity. The swatch colors below only
+   drive the little preview dots in the menu — the actual palette swap
+   happens in CSS via :root[data-theme="…"], so nothing here needs to know
+   what any given theme actually looks like beyond that preview. */
+const THEMES = [
+  { id: "fireglide", label: "FireGlide", fire: "#ff4d1c", glide: "#00d4ff" },
+  { id: "noir",      label: "Noir",      fire: "#ff6a3d", glide: "#5fd0ff" },
+  { id: "neon",      label: "Neon",      fire: "#ff3d6e", glide: "#00f0ff" },
+  { id: "sunset",    label: "Sunset",    fire: "#ff5277", glide: "#20d6c7" }
+];
+
+function applyTheme(id, { persist = true } = {}) {
+  const valid = THEMES.some((t) => t.id === id) ? id : "fireglide";
+  if (valid === "fireglide") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", valid);
+  if (persist) { try { localStorage.setItem("fg:theme", valid); } catch { /* private mode */ } }
+  $$(".theme-swatch").forEach((b) => b.classList.toggle("is-active", b.dataset.theme === valid));
+  return valid;
+}
+
+function themeSwitcher() {
+  const wrap = $("#themeSwitch"), open = $("#themeOpen"), menu = $("#themeMenu");
+  if (!wrap || !open || !menu) return;
+
+  const current = document.documentElement.getAttribute("data-theme") || "fireglide";
+  menu.innerHTML = THEMES.map((t) => `
+    <button class="theme-swatch${t.id === current ? " is-active" : ""}" type="button" role="menuitem" data-theme="${t.id}">
+      <span class="theme-swatch__dot" style="background:linear-gradient(135deg,${t.fire},${t.glide})"></span>
+      ${esc(t.label)}
+    </button>`).join("");
+
+  const toggle = (show) => {
+    menu.hidden = !show;
+    open.setAttribute("aria-expanded", String(show));
+  };
+
+  open.addEventListener("click", (e) => { e.stopPropagation(); toggle(menu.hidden); });
+  menu.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-theme]");
+    if (!b) return;
+    applyTheme(b.dataset.theme);
+    toggle(false);
+  });
+  document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) toggle(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) { toggle(false); open.focus(); } });
 }
 
 /* =========================================================
@@ -1989,6 +2043,7 @@ function init() {
   reveals();
   heroParallax();
   customCursor();
+  themeSwitcher();
   particleField();
   ripples();
   search();

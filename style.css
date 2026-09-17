@@ -39,6 +39,32 @@
   --shadow:0 24px 70px rgba(0,0,0,.6);
 }
 
+/* ---------- 1b. THEMES ----------
+   Alternate moods on the same fire(warm)/glide(cool) identity — swapping
+   only void depth, accent hue and glow strength, never the two brand
+   colors' roles, so Firepdx/Glidux stay recognisable in every theme. */
+:root[data-theme="noir"]{
+  --void:#020203;--panel:#0a0a0d;--panel-2:#0f1014;
+  --line:rgba(255,255,255,.06);--line-strong:rgba(255,255,255,.14);
+  --fire:#ff6a3d;--fire-2:#ffb454;--fire-soft:rgba(255,106,61,.16);
+  --glide:#5fd0ff;--glide-2:#5c8bff;--glide-soft:rgba(95,208,255,.14);
+  --text:#f2f4f8;--muted:#8b93a3;--dim:#5b6373;
+}
+:root[data-theme="neon"]{
+  --void:#08060f;--panel:#120e1f;--panel-2:#171029;
+  --line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.2);
+  --fire:#ff3d6e;--fire-2:#ff9a2e;--fire-soft:rgba(255,61,110,.22);
+  --glide:#00f0ff;--glide-2:#7a5cff;--glide-soft:rgba(0,240,255,.2);
+  --text:#f4f0ff;--muted:#a79fc2;--dim:#726a91;
+}
+:root[data-theme="sunset"]{
+  --void:#0d0508;--panel:#170a10;--panel-2:#1e0d14;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.17);
+  --fire:#ff5277;--fire-2:#ffb347;--fire-soft:rgba(255,82,119,.2);
+  --glide:#20d6c7;--glide-2:#7a5cff;--glide-soft:rgba(32,214,199,.18);
+  --text:#fdf1ee;--muted:#c39aa2;--dim:#8a6870;
+}
+
 /* ---------- 2. RESET ---------- */
 *,*::before,*::after{box-sizing:border-box;}
 html{scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%;}
@@ -132,7 +158,9 @@ ul{margin:0;padding:0;list-style:none;}
 .loader__pct{font-family:var(--font-display);color:var(--dim);font-size:13px;letter-spacing:.2em;}
 
 /* ---------- 5. CURSOR ---------- */
-.cursor,.cursor-dot{position:fixed;z-index:8000;pointer-events:none;border-radius:50%;opacity:0;}
+/* z-index sits above every overlay (player 8600, search 8500, loader 9000
+   included) so the ring never renders "behind" a modal and vanishes. */
+.cursor,.cursor-dot{position:fixed;top:0;left:0;z-index:9500;pointer-events:none;border-radius:50%;opacity:0;}
 .cursor{
   width:34px;height:34px;margin:-17px 0 0 -17px;
   border:1px solid rgba(255,255,255,.45);
@@ -143,7 +171,17 @@ ul{margin:0;padding:0;list-style:none;}
   width:56px;height:56px;margin:-28px 0 0 -28px;
   border-color:var(--fire);background:rgba(255,77,28,.10);
 }
-body.has-cursor,body.has-cursor a,body.has-cursor button{cursor:none;}
+/* the native pointer has to disappear everywhere the ring can be hovering —
+   previously this only covered <a> and <button>, so it reappeared next to
+   the ring (a visible double cursor) over inputs, selects and textareas. */
+body.has-cursor,
+body.has-cursor a,
+body.has-cursor button,
+body.has-cursor input,
+body.has-cursor select,
+body.has-cursor textarea,
+body.has-cursor label,
+body.has-cursor [role="button"]{cursor:none;}
 
 /* ---------- 6. SCROLL PROGRESS ---------- */
 .scroll-progress{
@@ -261,6 +299,37 @@ body.has-cursor,body.has-cursor a,body.has-cursor button{cursor:none;}
   font-family:var(--font-display);font-size:10px;letter-spacing:.1em;
   border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:var(--dim);
 }
+
+/* ---------- 7b. THEME SWITCHER ---------- */
+.theme-switch{position:relative;}
+.theme-open{
+  display:flex;align-items:center;justify-content:center;width:38px;height:38px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:50%;color:var(--muted);cursor:pointer;
+  transition:border-color .2s,color .2s,transform .2s var(--ease);
+}
+.theme-open:hover{border-color:var(--line-strong);color:var(--text);transform:rotate(18deg);}
+.theme-menu{
+  position:absolute;top:calc(100% + 12px);right:0;z-index:900;width:190px;
+  padding:8px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:rgba(11,13,18,.94);backdrop-filter:blur(14px);
+  box-shadow:0 22px 50px rgba(0,0,0,.55);
+  display:grid;gap:2px;
+  animation:panelIn .22s var(--ease);
+}
+.theme-swatch{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:9px 10px;border-radius:9px;border:1px solid transparent;
+  background:transparent;color:var(--muted);cursor:pointer;text-align:left;
+  font-family:var(--font-display);font-size:12px;letter-spacing:.05em;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.theme-swatch:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.theme-swatch.is-active{color:var(--text);border-color:var(--line-strong);background:rgba(255,255,255,.06);}
+.theme-swatch.is-active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:10px;color:var(--glide);}
+.theme-swatch__dot{width:16px;height:16px;border-radius:50%;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);}
+@media (max-width:640px){.theme-menu{right:-60px;}}
+
 .live-pill{
   display:inline-flex;align-items:center;gap:8px;
   font-family:var(--font-display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;

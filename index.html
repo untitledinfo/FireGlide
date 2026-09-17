@@ -7,7 +7,16 @@
 <title>FireGlide — Gaming Community | Firepdx × Glidux</title>
 <meta name="description" content="FireGlide is a gaming community bringing Firepdx and Glidux together. Watch gaming content, join events and connect with the community on Discord.">
 <meta name="theme-color" content="#05060a">
-<link rel="canonical" href="https://example.com/">
+<script>
+  // Applied before style.css paints, so switching themes never flashes the
+  // default one for a frame on reload.
+  try {
+    var t = localStorage.getItem("fg:theme");
+    if (t && t !== "fireglide") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) { /* private mode — falls back to the default theme */ }
+</script>
+<!-- Update canonical/og:url to the live deployed domain once one exists; the GitHub repo is a safe placeholder until then. -->
+<link rel="canonical" href="https://github.com/untitledinfo/FireGlide">
 <meta name="author" content="FireGlide">
 <meta name="keywords" content="FireGlide, Firepdx, Glidux, gaming community, Discord, Minecraft, Roblox, esports">
 
@@ -16,18 +25,18 @@
 <meta property="og:site_name" content="FireGlide">
 <meta property="og:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
 <meta property="og:description" content="Two creators. One community. Infinite gaming. Watch content, join events and connect on Discord.">
-<meta property="og:url" content="https://example.com/">
-<meta property="og:image" content="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/hero.png">
+<meta property="og:url" content="https://github.com/untitledinfo/FireGlide">
+<meta property="og:image" content="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/hero.png">
 <meta property="og:image:alt" content="FireGlide — where fire meets glide">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
 <meta name="twitter:description" content="Two creators. One community. Infinite gaming.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/hero.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/hero.png">
 
-<link rel="icon" href="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/favicon.png">
+<link rel="icon" href="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/untitledinfo/FireGlide/main/assets/favicon.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +49,7 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "FireGlide",
-  "url": "https://example.com/",
+  "url": "https://github.com/untitledinfo/FireGlide",
   "description": "Gaming community bringing Firepdx and Glidux together.",
   "sameAs": [
     "https://www.youtube.com/@Firepdx",
@@ -103,6 +112,12 @@
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         <kbd>Ctrl K</kbd>
       </button>
+      <div class="theme-switch" id="themeSwitch">
+        <button class="theme-open" id="themeOpen" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Change theme">
+          <i class="fa-solid fa-palette" aria-hidden="true"></i>
+        </button>
+        <div class="theme-menu" id="themeMenu" role="menu" hidden></div>
+      </div>
       <span class="live-pill"><i class="dot" aria-hidden="true"></i> Discord live</span>
       <a class="btn btn--fire nav__cta" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
         Join Discord <i class="fa-brands fa-discord" aria-hidden="true"></i>
