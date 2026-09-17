@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>FireGlide — Gaming Community | Firepdx × Glidux</title>
+<meta name="description" content="FireGlide is a gaming community bringing Firepdx and Glidux together. Watch gaming content, join events and connect with the community on Discord.">
+<meta name="theme-color" content="#05060a">
+<link rel="canonical" href="https://example.com/">
+<meta name="author" content="FireGlide">
+<meta name="keywords" content="FireGlide, Firepdx, Glidux, gaming community, Discord, Minecraft, Roblox, esports">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FireGlide">
+<meta property="og:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
+<meta property="og:description" content="Two creators. One community. Infinite gaming. Watch content, join events and connect on Discord.">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/hero.png">
+<meta property="og:image:alt" content="FireGlide — where fire meets glide">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FireGlide — Gaming Community | Firepdx × Glidux">
+<meta name="twitter:description" content="Two creators. One community. Infinite gaming.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/hero.png">
+
+<link rel="icon" href="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/assets/favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FireGlide",
+  "url": "https://example.com/",
+  "description": "Gaming community bringing Firepdx and Glidux together.",
+  "sameAs": [
+    "https://www.youtube.com/@Firepdx",
+    "https://www.youtube.com/@Glidux",
+    "https://discord.gg/zVZvjDcu"
+  ]
+}
+</script>
+</head>
+
+<body class="is-loading">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ LOADING SCREEN ============ -->
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="loader__inner">
+    <div class="loader__mark">
+      <span class="loader__fire">FIRE</span><span class="loader__glide">GLIDE</span>
+    </div>
+    <p class="loader__msg" id="loaderMsg">Initializing community…</p>
+    <div class="loader__bar"><span id="loaderFill"></span></div>
+    <div class="loader__pct"><span id="loaderPct">0</span>%</div>
+  </div>
+</div>
+
+<!-- ============ CHROME ============ -->
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<div class="cursor" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<canvas class="particles" id="particles" aria-hidden="true"></canvas>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="seam" aria-hidden="true"></div>
+
+<div class="toasts" id="toasts" role="region" aria-label="Notifications" aria-live="polite"></div>
+
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="nav">
+  <div class="nav__wrap">
+    <a class="brand" href="#home" aria-label="FireGlide home">
+      <img class="brand__img" id="brandLogo" alt="" width="34" height="34">
+      <span class="brand__fallback" aria-hidden="true">FG</span>
+      <span class="brand__text"><b>FIRE</b><i>GLIDE</i></span>
+    </a>
+
+    <nav class="nav__links" id="navLinks" aria-label="Primary">
+      <a href="#home">Home</a>
+      <a href="#creators">Creators</a>
+      <a href="#live">Live</a>
+      <a href="#videos">Videos</a>
+      <a href="#events">Events</a>
+      <a href="#community">Community</a>
+      <a href="#staff">Staff</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="nav__right">
+      <button class="search-btn" id="searchOpen" aria-label="Search FireGlide (Control K)">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <kbd>Ctrl K</kbd>
+      </button>
+      <span class="live-pill"><i class="dot" aria-hidden="true"></i> Discord live</span>
+      <a class="btn btn--fire nav__cta" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+        Join Discord <i class="fa-brands fa-discord" aria-hidden="true"></i>
+      </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <div class="hero__glow hero__glow--fire" aria-hidden="true"></div>
+  <div class="hero__glow hero__glow--glide" aria-hidden="true"></div>
+  <canvas class="hero__collide" id="collide" aria-hidden="true"></canvas>
+
+  <div class="hero__inner" id="heroParallax">
+    <p class="hud hud--top"><i class="dot" aria-hidden="true"></i> FireGlide network · system online</p>
+
+    <h1 class="hero__title" id="heroTitle">
+      <span class="hero__word hero__word--fire">FIRE</span><span class="hero__word hero__word--glide">GLIDE</span>
+    </h1>
+
+    <p class="hero__cross" id="heroCross" aria-label="Firepdx times Glidux">
+      <span>FIREPDX</span><em>×</em><span>GLIDUX</span>
+    </p>
+
+    <p class="hero__tag">Where fire meets glide.</p>
+    <p class="hero__desc">Gaming creators. Competitive events. One unstoppable community.</p>
+
+    <div class="hero__actions">
+      <a class="btn btn--fire" data-magnetic href="https://www.youtube.com/@Firepdx" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-fire" aria-hidden="true"></i> Watch Firepdx
+      </a>
+      <a class="btn btn--glide" data-magnetic href="https://www.youtube.com/@Glidux" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Watch Glidux
+      </a>
+      <a class="btn btn--ghost" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-discord" aria-hidden="true"></i> Join Discord
+      </a>
+    </div>
+
+    <img class="hero__art" id="heroArt" alt="" fetchpriority="high">
+  </div>
+
+  <a class="hero__scroll" href="#fusion" aria-label="Scroll to next section"><span></span></a>
+</section>
+
+<!-- ============ FUSION ============ -->
+<section class="fusion" id="fusion" data-reveal>
+  <div class="fusion__stage" aria-hidden="true">
+    <div class="fusion__side fusion__side--fire">
+      <span class="fusion__icon"><svg viewBox="0 0 40 44" aria-hidden="true"><polygon class="mark__ring" points="20,1.5 38.5,12 38.5,32 20,42.5 1.5,32 1.5,12"/><polygon class="mark__fill" points="20,6 34,14 34,30 20,38 6,30 6,14"/></svg><b>F</b></span>
+      <span class="fusion__name">FIREPDX</span>
+      <span class="fusion__beam"></span>
+    </div>
+    <div class="fusion__core">
+      <span class="fusion__pulse"></span>
+      <span class="fusion__label">FIREGLIDE</span>
+    </div>
+    <div class="fusion__side fusion__side--glide">
+      <span class="fusion__icon"><svg viewBox="0 0 40 44" aria-hidden="true"><polygon class="mark__ring" points="20,1.5 38.5,12 38.5,32 20,42.5 1.5,32 1.5,12"/><polygon class="mark__fill" points="20,6 34,14 34,30 20,38 6,30 6,14"/></svg><b>G</b></span>
+      <span class="fusion__name">GLIDUX</span>
+      <span class="fusion__beam"></span>
+    </div>
+  </div>
+  <p class="fusion__caption">Two channels running in the same direction — one community, one Discord, one calendar of events.</p>
+</section>
+
+<!-- ============ CREATORS ============ -->
+<section class="section" id="creators" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">The creators</h2>
+    <p class="section__sub">Two creators. Two styles. One community.</p>
+  </div>
+  <div class="creators" id="creatorGrid"><!-- rendered by script.js --></div>
+</section>
+
+<!-- ============ COMMUNITY / DISCORD ============ -->
+<section class="section" id="community" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">Discord community</h2>
+    <p class="section__sub">The server is where everything actually happens.</p>
+  </div>
+
+  <div class="stats-panel">
+    <p class="hud"><i class="dot" aria-hidden="true"></i> Server status: online</p>
+    <div class="stats-panel__grid">
+      <div class="stat-tile">
+        <span class="stat-tile__label">Members</span>
+        <strong class="stat-tile__value" id="memberCount">—</strong>
+        <span class="stat-tile__note" id="memberNote">Waiting for live data</span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-tile__label">Online now</span>
+        <strong class="stat-tile__value" id="onlineCount">—</strong>
+        <span class="stat-tile__note">Updates every 60s</span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-tile__label">Server status</span>
+        <strong class="stat-tile__value stat-tile__value--ok" id="serverStatus">Checking…</strong>
+        <span class="stat-tile__note" id="statusNote">/api/discord</span>
+      </div>
+    </div>
+  </div>
+
+  <article class="discord-cta">
+    <img class="discord-cta__img" id="discordArt" alt="" loading="lazy">
+    <i class="fa-brands fa-discord discord-cta__icon" aria-hidden="true"></i>
+    <h3>Join the FireGlide community</h3>
+    <p>Connect with gamers, creators, developers and competitive players.</p>
+    <ul class="discord-cta__meta">
+      <li><b id="ctaMembers">—</b> members</li>
+      <li><b id="ctaOnline">—</b> online</li>
+      <li><b class="ok">Online</b> status</li>
+    </ul>
+    <a class="btn btn--fire btn--lg" data-magnetic href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">
+      Join Discord <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </article>
+</section>
+
+<!-- ============ LIVE BAND ============ -->
+<section class="section section--tight live-band" id="live" data-state="loading" data-reveal>
+  <div class="live-band__head">
+    <h2 class="section__title section__title--sm">Live now</h2>
+    <p class="hud"><i class="dot dot--red" aria-hidden="true"></i> Streams from both channels — live status re-checked while you browse</p>
+  </div>
+  <div class="live-grid" id="liveGrid"></div>
+  <p class="live-off" id="liveOffline" hidden>
+    Nobody is streaming right now. New uploads land in the grid below the moment they publish — or turn on notifications on
+    <a href="https://www.youtube.com/@Firepdx" target="_blank" rel="noopener noreferrer">Firepdx</a> and
+    <a href="https://www.youtube.com/@Glidux" target="_blank" rel="noopener noreferrer">Glidux</a>.
+  </p>
+</section>
+
+<!-- ============ TICKER ============ -->
+<section class="ticker" data-reveal aria-hidden="true">
+  <div class="ticker__track">
+    <span class="ticker__group">
+      <span class="ticker__item">Real uploads</span>
+      <span class="ticker__item">Firepdx × Glidux</span>
+      <span class="ticker__item">Plays right here on-site</span>
+      <span class="ticker__item">Live checked round the clock</span>
+      <span class="ticker__item">Minecraft · Shorts · Edits</span>
+    </span>
+    <span class="ticker__group">
+      <span class="ticker__item">Real uploads</span>
+      <span class="ticker__item">Firepdx × Glidux</span>
+      <span class="ticker__item">Plays right here on-site</span>
+      <span class="ticker__item">Live checked round the clock</span>
+      <span class="ticker__item">Minecraft · Shorts · Edits</span>
+    </span>
+  </div>
+</section>
+
+<!-- ============ VIDEOS ============ -->
+<section class="section" id="videos" data-reveal>
+  <div class="section__head section__head--row">
+    <div>
+      <h2 class="section__title">Latest videos</h2>
+      <p class="section__sub">Pulled straight from both YouTube channels — full uploads, shorts and streams.</p>
+    </div>
+    <p class="yt-status" id="ytStatus"><i class="dot dot--idle" aria-hidden="true"></i> Loading videos…</p>
+  </div>
+
+  <article class="featured sheen" id="featured"><!-- rendered by script.js --></article>
+
+  <div class="filters-row">
+    <div class="filters" id="videoFilters" role="tablist" aria-label="Filter videos"></div>
+    <div class="sort" id="videoSort" role="group" aria-label="Sort videos">
+      <button class="sort__btn is-active" type="button" data-sort="date">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i> Newest
+      </button>
+      <button class="sort__btn" type="button" data-sort="views">
+        <i class="fa-solid fa-fire-flame-curved" aria-hidden="true"></i> Most viewed
+      </button>
+    </div>
+  </div>
+
+  <div class="videos" id="videoGrid"></div>
+  <p class="empty" id="videoEmpty" hidden>Nothing under that filter yet. Pick another one, or check back after the next upload.</p>
+  <button class="btn btn--ghost btn--lg video-more" id="videoMore" type="button" hidden data-magnetic>Load more</button>
+</section>
+
+<!-- ============ EVENTS ============ -->
+<section class="section" id="events" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">FireGlide events</h2>
+    <p class="section__sub">Tournaments, challenges and community nights.</p>
+  </div>
+
+  <div class="countdown" id="countdown">
+    <p class="hud">Next event · <span id="nextEventName">—</span></p>
+    <div class="countdown__units" id="countdownUnits">
+      <div class="unit"><strong id="cdDays">00</strong><span>Days</span></div>
+      <div class="unit"><strong id="cdHours">00</strong><span>Hours</span></div>
+      <div class="unit"><strong id="cdMins">00</strong><span>Minutes</span></div>
+      <div class="unit"><strong id="cdSecs">00</strong><span>Seconds</span></div>
+    </div>
+    <p class="countdown__live" id="countdownLive" hidden><i class="dot dot--red" aria-hidden="true"></i> Event live now</p>
+  </div>
+
+  <div class="events" id="eventGrid"></div>
+</section>
+
+<!-- ============ STATISTICS ============ -->
+<section class="section section--tight" id="numbers" data-reveal>
+  <div class="counters" id="counters"></div>
+</section>
+
+<!-- ============ GAMES ============ -->
+<section class="section" id="games" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">What we play</h2>
+    <p class="section__sub">Where the community spends its nights.</p>
+  </div>
+  <div class="games" id="gameGrid"></div>
+</section>
+
+<!-- ============ STAFF ============ -->
+<section class="section" id="staff" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">Join the FireGlide staff</h2>
+    <p class="section__sub">Nine roles, one team. Applications are reviewed on Discord.</p>
+  </div>
+
+  <div class="staff">
+    <aside class="staff__roles">
+      <p class="hud">Open roles</p>
+      <ul id="roleList"></ul>
+      <p class="staff__note">This is a static site, so nothing is stored here. Submitting validates your answers in the browser, then hands you a copy to paste in the Discord application channel.</p>
+    </aside>
+
+    <form class="staff__form" id="staffForm" novalidate>
+      <div class="field">
+        <label for="fUser">Discord username</label>
+        <input id="fUser" name="user" type="text" autocomplete="username" placeholder="yourname" required>
+        <small class="err" data-err="fUser"></small>
+      </div>
+      <div class="field">
+        <label for="fAge">Age</label>
+        <input id="fAge" name="age" type="number" min="13" max="99" placeholder="16" required>
+        <small class="err" data-err="fAge"></small>
+      </div>
+      <div class="field">
+        <label for="fRole">Position</label>
+        <select id="fRole" name="role" required></select>
+        <small class="err" data-err="fRole"></small>
+      </div>
+      <div class="field">
+        <label for="fAvail">Availability</label>
+        <input id="fAvail" name="availability" type="text" placeholder="Weeknights, 6–10pm GMT+5" required>
+        <small class="err" data-err="fAvail"></small>
+      </div>
+      <div class="field field--full">
+        <label for="fExp">Experience</label>
+        <textarea id="fExp" name="experience" rows="3" placeholder="Servers you've helped run, events you've managed…" required></textarea>
+        <small class="err" data-err="fExp"></small>
+      </div>
+      <div class="field field--full">
+        <label for="fSkills">Skills</label>
+        <input id="fSkills" name="skills" type="text" placeholder="Moderation, design, video editing, bots…" required>
+        <small class="err" data-err="fSkills"></small>
+      </div>
+      <div class="field field--full">
+        <label for="fWhy">Why should we choose you?</label>
+        <textarea id="fWhy" name="why" rows="4" placeholder="Tell us what you'd bring to the server." required></textarea>
+        <small class="err" data-err="fWhy"></small>
+      </div>
+      <div class="field field--full">
+        <label for="fPort">Portfolio <span class="opt">(optional)</span></label>
+        <input id="fPort" name="portfolio" type="url" placeholder="https://…">
+        <small class="err" data-err="fPort"></small>
+      </div>
+
+      <div class="staff__submit">
+        <button class="btn btn--fire btn--lg" type="submit" id="submitBtn" data-magnetic>Submit application</button>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="staff__done" id="staffDone" hidden>
+        <h3>Application checked</h3>
+        <p>Everything looks complete. Copy your answers and post them in the application channel on Discord.</p>
+        <div class="staff__done-actions">
+          <button class="btn btn--ghost" type="button" id="copyApp">Copy answers</button>
+          <a class="btn btn--fire" href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">Continue to Discord <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq" data-reveal>
+  <div class="section__head">
+    <h2 class="section__title">Questions</h2>
+    <p class="section__sub">Everything people ask before joining.</p>
+  </div>
+  <div class="faq" id="faqList"></div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="brand__text brand__text--lg"><b>FIRE</b><i>GLIDE</i></span>
+      <p>Where fire meets glide.</p>
+      <p class="hud"><i class="dot" aria-hidden="true"></i> Community online</p>
+    </div>
+
+    <nav class="footer__col" aria-label="Explore">
+      <h3>Explore</h3>
+      <a href="#home">Home</a>
+      <a href="#creators">Creators</a>
+      <a href="#live">Live</a>
+      <a href="#videos">Videos</a>
+      <a href="#events">Events</a>
+      <a href="#community">Community</a>
+    </nav>
+
+    <nav class="footer__col" aria-label="Community">
+      <h3>Community</h3>
+      <a href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a href="#staff">Staff</a>
+      <a href="#events">Events</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <nav class="footer__col" aria-label="Creators">
+      <h3>Creators</h3>
+      <a href="https://www.youtube.com/@Firepdx" target="_blank" rel="noopener noreferrer">Firepdx</a>
+      <a href="https://www.youtube.com/@Glidux" target="_blank" rel="noopener noreferrer">Glidux</a>
+    </nav>
+
+    <nav class="footer__col" aria-label="Social">
+      <h3>Social</h3>
+      <a href="https://www.youtube.com/@Firepdx" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i> YouTube</a>
+      <a href="https://discord.gg/zVZvjDcu" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a>
+    </nav>
+  </div>
+
+  <div class="footer__bottom">
+    <p>© 2026 FireGlide. All rights reserved.</p>
+    <p class="hud">Fire × Glide · player connected</p>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="Back to top" hidden><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+
+<!-- ============ ON-SITE VIDEO PLAYER ============ -->
+<div class="player" id="player" role="dialog" aria-modal="true" aria-label="Video player" hidden>
+  <div class="player__shell">
+    <button class="player__close" id="playerClose" aria-label="Close video"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    <div class="player__nav" id="playerNav" hidden>
+      <button class="player__nav-btn" id="playerPrev" type="button" aria-label="Previous video"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="player__nav-btn" id="playerNext" type="button" aria-label="Next video"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+    </div>
+    <div class="player__ratio">
+      <span class="player__spinner" aria-hidden="true"></span>
+      <iframe id="playerFrame" title="" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+    </div>
+    <div class="player__bar">
+      <span class="player__txt">
+        <b id="playerTitle"></b>
+        <span id="playerMeta"></span>
+      </span>
+      <a class="btn btn--fire btn--sm sheen" id="playerLink" target="_blank" rel="noopener noreferrer">
+        Watch on YouTube <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SEARCH OVERLAY ============ -->
+<div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search FireGlide" hidden>
+  <div class="search__panel">
+    <div class="search__bar">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input id="searchInput" type="search" placeholder="Search creators, videos, events, games, FAQ…" aria-label="Search" autocomplete="off">
+      <button id="searchClose" aria-label="Close search">Esc</button>
+    </div>
+    <div class="search__results" id="searchResults" role="listbox" aria-label="Search results"></div>
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
